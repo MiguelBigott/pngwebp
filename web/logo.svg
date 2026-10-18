@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect x="8" y="8" width="496" height="496" rx="112" fill="#16120e" stroke="#3a3128" stroke-width="10"/>
+  <defs><clipPath id="miniatura"><rect x="112" y="96" width="288" height="288" rx="14"/></clipPath></defs>
+  <rect x="112" y="96" width="288" height="288" rx="14" fill="#ece2cf"/>
+  <g clip-path="url(#miniatura)">
+    <circle cx="318" cy="178" r="38" fill="#c9a45c"/><path d="M100 384 L210 238 L278 318 L318 274 L412 384 Z" fill="#2c4a8c"/><path d="M100 384 L210 238 L246 280 L176 384 Z" fill="#4d74c9"/>
+  </g>
+  <rect x="112" y="96" width="288" height="288" rx="14" fill="none" stroke="#c9a45c" stroke-width="22"/>
+  <path d="M184 440 H328" stroke="#c8483a" stroke-width="22" stroke-linecap="round"/>
+</svg>
