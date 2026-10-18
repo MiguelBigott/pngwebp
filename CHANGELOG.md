@@ -3,6 +3,17 @@
 Todas las versiones siguen [Versionado Semántico](https://semver.org/lang/es/). Cada una tiene su
 etiqueta `vX.Y.Z` y su página en [Releases](../../releases).
 
+## [1.1.0] - 2026-10-18
+
+### Cambiado
+- Logo nuevo, «Lámina», en el estilo del logo de Codex: una lámina de pergamino con la esquina doblada, un sol de oro, montañas de tinta y el marcapáginas rojo. Trae una versión reforzada para que se lea bien a 16 px.
+- Skin «Lámina», hermano de Codex y de Clipvault: el mismo gris neutro, líneas visibles y etiquetas en minúsculas, con `~/pngwebp_` en el encabezado y el azul de la app como acento.
+- El ahorro de cada imagen se ve en una etiqueta (−87 %); si el WebP pesa más que el original, la etiqueta lo marca en rojo (+143 %).
+
+### Corregido
+- La línea del total decía «imagenes» sin tilde.
+- Los nombres con «1x1» se mostraban como «1×1» por la letra; ahora se ven igual que el archivo.
+
 ## [1.0.0] - 2026-10-18
 
 Primera versión como app de Windows. Antes era un conversor en HTML que dejaba todas las imágenes
@@ -20,4 +31,5 @@ en 1000 × 1000 con calidad 0,85.
 - Ventana nativa de Windows (WebView2) con icono nítido en la barra de tareas.
 - Forma parte de la suite [Codex](https://github.com/MiguelBigott/codex).
 
+[1.1.0]: https://github.com/MiguelBigott/pngwebp/releases/tag/v1.1.0
 [1.0.0]: https://github.com/MiguelBigott/pngwebp/releases/tag/v1.0.0

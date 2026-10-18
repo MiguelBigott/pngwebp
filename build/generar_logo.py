@@ -1,5 +1,5 @@
-"""Logo de PNGWebp «Iluminador»: una miniatura enmarcada en oro (montañas de lapislázuli y
-un sol dorado, el símbolo de «imagen») sobre la línea roja de la rúbrica, como Clipvault.
+"""Logo de PNGWebp «Lámina», en el estilo del códice de Codex: una lámina de pergamino con la
+esquina doblada, un sol de oro, montañas de tinta y el marcapáginas rojo de la rúbrica.
 
     python build/generar_logo.py
 
@@ -21,38 +21,29 @@ RAIZ = os.path.dirname(BUILD)
 EDGE = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 
 TINTA, BORDE, PERGAMINO, ORO, RUBRICA = "#16120e", "#3a3128", "#ece2cf", "#c9a45c", "#c8483a"
-LAPIS, LAPIS_CLARO = "#2c4a8c", "#4d74c9"
+LAPIS, LAPIS_CLARO = "#2c4a8c", "#6f93df"
 
 
 def svg(chico=False):
-    """Logo en viewBox 512. `chico`: marco más grande y detalles más gruesos para 16-32 px."""
+    """Logo en viewBox 512. `chico`: lámina más grande y detalles más gruesos para 16-32 px."""
     if chico:
-        x, y, lado, marco, radio = 84, 64, 344, 34, 18
-        sol, r_sol = (330, 160), 50
-        montes = [f"M{x - 10} {y + lado} L214 214 L300 318 L346 262 L{x + lado + 10} {y + lado} Z"]
-        claro = None
-        linea, grosor_linea = "M164 468 H348", 32
+        hoja = '<path d="M106 62 H316 L396 142 V416 H106 Z" fill="{p}"/>'
+        esquina = '<path d="M316 62 V142 H396" fill="{t}" stroke="{t}" stroke-width="16" stroke-linejoin="round"/>'
+        sol = '<circle cx="306" cy="214" r="42" fill="{o}"/>'
+        montes = '<path d="M132 376 L210 278 L262 334 L304 296 L370 376 Z" fill="{t}"/>'
+        marca = '<path d="M290 416 V478 L306 462 L322 478 V416 Z" fill="{r}"/>'
         borde = 0
     else:
-        x, y, lado, marco, radio = 112, 96, 288, 22, 14
-        sol, r_sol = (318, 178), 38
-        montes = [f"M{x - 12} {y + lado} L210 238 L278 318 L318 274 L{x + lado + 12} {y + lado} Z"]
-        claro = f"M{x - 12} {y + lado} L210 238 L246 280 L176 {y + lado} Z"
-        linea, grosor_linea = "M184 440 H328", 22
+        hoja = '<path d="M146 92 H310 L366 148 V392 H146 Z" fill="{p}"/>'
+        esquina = '<path d="M310 92 V148 H366" fill="{t}" stroke="{t}" stroke-width="10" stroke-linejoin="round"/>'
+        sol = '<circle cx="300" cy="216" r="28" fill="{o}"/>'
+        montes = '<path d="M172 356 L222 288 L256 324 L288 296 L340 356 Z" fill="{t}"/>'
+        marca = '<path d="M296 392 V448 L306 438 L316 448 V392 Z" fill="{r}"/>'
         borde = 10
-    capas = [f'<circle cx="{sol[0]}" cy="{sol[1]}" r="{r_sol}" fill="{ORO}"/>']
-    capas += [f'<path d="{m}" fill="{LAPIS}"/>' for m in montes]
-    if claro:
-        capas.append(f'<path d="{claro}" fill="{LAPIS_CLARO}"/>')
+    partes = "\n  ".join(x.format(p=PERGAMINO, t=TINTA, o=ORO, r=RUBRICA) for x in (hoja, esquina, sol, montes, marca))
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <rect x="8" y="8" width="496" height="496" rx="112" fill="{TINTA}" stroke="{BORDE}" stroke-width="{borde}"/>
-  <defs><clipPath id="miniatura"><rect x="{x}" y="{y}" width="{lado}" height="{lado}" rx="{radio}"/></clipPath></defs>
-  <rect x="{x}" y="{y}" width="{lado}" height="{lado}" rx="{radio}" fill="{PERGAMINO}"/>
-  <g clip-path="url(#miniatura)">
-    {"".join(capas)}
-  </g>
-  <rect x="{x}" y="{y}" width="{lado}" height="{lado}" rx="{radio}" fill="none" stroke="{ORO}" stroke-width="{marco}"/>
-  <path d="{linea}" stroke="{RUBRICA}" stroke-width="{grosor_linea}" stroke-linecap="round"/>
+  {partes}
 </svg>
 '''
 
@@ -82,17 +73,17 @@ def png_de_svg(texto_svg, lado, destino):
 
 
 def lateral(logo_png, destino):
-    fuente = os.path.join(RAIZ, "web", "fonts", "cormorant-garamond-latin-600-normal.woff2").replace(os.sep, "/")
+    fuente = os.path.join(RAIZ, "web", "fonts", "inter-latin-600-normal.woff2").replace(os.sep, "/")
     with tempfile.TemporaryDirectory() as tmp:
         png = os.path.join(tmp, "lateral.png")
         renderizar(f'''<html><head><style>
-@font-face {{ font-family: Serif; src: url("file:///{fuente}"); font-weight: 600; }}
+@font-face {{ font-family: Titulo; src: url("file:///{fuente}"); font-weight: 600; }}
 html, body {{ margin: 0; width: 328px; height: 628px; overflow: hidden; background: {TINTA}; }}
 body {{ display: flex; flex-direction: column; align-items: center; color: {PERGAMINO}; }}
 img {{ width: 200px; height: 200px; margin-top: 150px; }}
-h1 {{ margin: 30px 0 0; font-family: Serif; font-weight: 600; font-size: 48px; }}
+h1 {{ margin: 30px 0 0; font-family: Titulo; font-weight: 600; font-size: 46px; letter-spacing: -.03em; }}
 h1 span {{ color: {LAPIS_CLARO}; }}
-</style></head><body><img src="file:///{logo_png.replace(os.sep, "/")}"><h1>PNG<span>Webp</span></h1></body></html>''', 328, 628, png)
+</style></head><body><img src="file:///{logo_png.replace(os.sep, "/")}"><h1>Png<span>Webp</span></h1></body></html>''', 328, 628, png)
         Image.open(png).convert("RGB").save(destino, format="BMP")
 
 

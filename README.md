@@ -6,7 +6,7 @@
 
 > Convierte imágenes **PNG y JPG a WebP** con la máxima calidad y el menor peso: sueltas tus imágenes o una carpeta entera y obtienes archivos mucho más livianos, sin elegir calidades ni tocar nada.
 
-[![Versión](https://img.shields.io/badge/versión-v1.0.0-4d74c9)](CHANGELOG.md)
+[![Versión](https://img.shields.io/badge/versión-v1.1.0-4d74c9)](CHANGELOG.md)
 [![CI](https://github.com/MiguelBigott/pngwebp/actions/workflows/ci.yml/badge.svg)](https://github.com/MiguelBigott/pngwebp/actions/workflows/ci.yml)
 [![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![Windows](https://img.shields.io/badge/Windows-10%20·%2011-0078D4)](#-instalación)
@@ -62,7 +62,7 @@ Un PNG sale sin pérdida si así pesa como mucho un 20 % más que con pérdida. 
 | Aplicación | [Go](https://go.dev): servidor local con la biblioteca estándar y [x/image](https://pkg.go.dev/golang.org/x/image) para encuadrar |
 | Motor | [libwebp](https://developers.google.com/speed/webp) 1.6.0 de Google (`cwebp`) |
 | Ventana | [WebView2](https://developer.microsoft.com/microsoft-edge/webview2/) con [go-webview2](https://github.com/jchv/go-webview2) |
-| Interfaz | HTML, CSS y JavaScript embebidos (`go:embed`), skin «Iluminador» con Cormorant Garamond e Inter |
+| Interfaz | HTML, CSS y JavaScript embebidos (`go:embed`), skin «Lámina» con Inter y Space Mono |
 | Instalador | [NSIS](https://nsis.sourceforge.io) |
 | CI | GitHub Actions |
 
@@ -88,7 +88,7 @@ Genera `dist/PNGWebp.exe`, `dist/componentes/` y `dist/PNGWebp-Setup-<versión>.
 libwebp de la [página oficial de Google](https://developers.google.com/speed/webp/download), verifica su
 SHA-256 y guarda `cwebp.exe` con su licencia en `build/componentes/` (fuera de git).
 
-El logo (la miniatura iluminada) se define en `build/generar_logo.py`, que escribe `web/logo.svg`,
+El logo «Lámina» (una lámina de pergamino con sol de oro y montañas de tinta, en el estilo del logo de Codex) se define en `build/generar_logo.py`, que escribe `web/logo.svg`,
 `build/logo.png`, `build/app.ico` (con una versión reforzada para 16-32 px) y `build/lateral.bmp`:
 
 ```powershell
@@ -110,4 +110,4 @@ Para revisar la interfaz en un navegador, sin ventana, ejecuta la app con `PNGWE
 
 **Creado por Miguel Bigott.** Nació de un conversor en HTML que dejaba todo en 1000 × 1000.
 
-Incluye [libwebp](https://chromium.googlesource.com/webm/libwebp) de Google (licencia BSD, en `componentes/LICENSE-libwebp.txt`) y las tipografías [Cormorant Garamond](https://fonts.google.com/specimen/Cormorant+Garamond) e [Inter](https://fonts.google.com/specimen/Inter) (SIL Open Font License, ver `web/fonts/`).
+Incluye [libwebp](https://chromium.googlesource.com/webm/libwebp) de Google (licencia BSD, en `componentes/LICENSE-libwebp.txt`) y las tipografías [Inter](https://fonts.google.com/specimen/Inter) y [Space Mono](https://fonts.google.com/specimen/Space+Mono) (SIL Open Font License, ver `web/fonts/`).

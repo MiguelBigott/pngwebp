@@ -125,7 +125,7 @@ document.querySelectorAll('input[name="tamano"]').forEach((r) => r.addEventListe
   api("/api/tamano", { tamano: r.value }).catch((e) => avisar(e.message, true));
 }));
 
-/* ---------------- Las iluminadas ---------------- */
+/* ---------------- Las convertidas ---------------- */
 
 const MODO = { "sin-perdida": "sin pérdida", "calidad-alta": "calidad alta" };
 
@@ -135,10 +135,8 @@ function detalle(it) {
     case "convirtiendo": return [`${peso(it.antes)} · convirtiendo…`];
     case "error": return [it.error || "No se pudo convertir"];
     case "lista": {
-      const dif = Math.round((1 - it.despues / it.antes) * 100);
-      const ahorro = dif > 0 ? `${dif} % menos` : null;
-      if (ahorro) return [`${peso(it.antes)} → ${peso(it.despues)} · ${ahorro}`];
-      return [`${peso(it.antes)} → ${peso(it.despues)} · `, { mas: `pesa ${-dif} % más` }];
+      // El ahorro va en la etiqueta de al lado (−87 %); si pesa más, la etiqueta lo avisa.
+      return [`${peso(it.antes)} → ${peso(it.despues)}`];
     }
   }
   return [""];
@@ -153,7 +151,7 @@ function boton(texto, fn) {
   return b;
 }
 
-const ESTADO = { cola: "en cola", convirtiendo: "convirtiendo", lista: "iluminada", error: "" };
+const ESTADO = { cola: "en cola", convirtiendo: "convirtiendo", lista: "", error: "error" };
 const filas = new Map(); // id -> li
 
 function pintarCola(cola) {
@@ -184,7 +182,16 @@ function pintarCola(cola) {
       return s;
     }));
     li.querySelector(".detalle2").textContent = it.estado === "lista" ? `${MODO[it.modo] || ""} · ${it.ancho} × ${it.alto}` : "";
-    li.querySelector(".est").textContent = ESTADO[it.estado] || "";
+    const est = li.querySelector(".est");
+    let etiqueta = ESTADO[it.estado] || "", clase = it.estado, aviso = "";
+    if (it.estado === "lista") {
+      const dif = Math.round((1 - it.despues / it.antes) * 100);
+      etiqueta = dif > 0 ? `−${dif} %` : `+${-dif} %`;
+      if (dif <= 0) { clase = "mas"; aviso = `Pesa ${-dif} % más que el original`; }
+    }
+    est.className = `est ${clase}`;
+    est.textContent = etiqueta;
+    est.title = aviso;
 
     const acc = li.querySelector(".acciones");
     if (acc.dataset.firma !== it.estado) {
@@ -208,7 +215,7 @@ function pintarCola(cola) {
   if (!total.hidden) {
     const n = listas.length;
     total.replaceChildren("Ahorraste ", Object.assign(document.createElement("b"), { textContent: peso(antes - despues) }),
-      ` en ${n} imagen${n === 1 ? "" : "es"}: ${n === 1 ? "pesa" : "pesan"} un ${Math.round((1 - despues / antes) * 100)} % menos.`);
+      ` en ${n} ${n === 1 ? "imagen" : "imágenes"}: ${n === 1 ? "pesa" : "pesan"} un ${Math.round((1 - despues / antes) * 100)} % menos.`);
   }
   const pendientes = cola.filter((it) => it.estado === "cola" || it.estado === "convirtiendo").length;
   document.title = pendientes ? `PNGWebp (${pendientes})` : "PNGWebp";
