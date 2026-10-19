@@ -5,7 +5,6 @@ package main
 import (
 	"bufio"
 	"encoding/binary"
-	"errors"
 	"image"
 	"image/draw"
 	"image/jpeg"
@@ -120,7 +119,7 @@ func medidas(ruta string, orientacion int) (int, int, error) {
 	defer f.Close()
 	cfg, _, err := image.DecodeConfig(f)
 	if err != nil {
-		return 0, 0, errors.New("no se pudo leer la imagen")
+		return 0, 0, msj("noLeerImagen")
 	}
 	if orientacion >= 5 {
 		return cfg.Height, cfg.Width, nil
@@ -142,7 +141,7 @@ func validar(ruta string) error {
 	case nil, jpeg.UnsupportedError, png.UnsupportedError:
 		return nil
 	}
-	return errors.New("no se pudo leer la imagen: el archivo parece dañado o incompleto")
+	return msj("imagenDanada")
 }
 
 // cargar decodifica la imagen y la endereza según su orientación EXIF.
@@ -154,7 +153,7 @@ func cargar(ruta string, orientacion int) (*image.NRGBA, error) {
 	defer f.Close()
 	img, _, err := image.Decode(bufio.NewReader(f))
 	if err != nil {
-		return nil, errors.New("no se pudo leer la imagen: el archivo parece dañado")
+		return nil, msj("imagenDanada")
 	}
 	b := img.Bounds()
 	base := image.NewNRGBA(image.Rect(0, 0, b.Dx(), b.Dy()))

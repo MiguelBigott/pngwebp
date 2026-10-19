@@ -6,7 +6,7 @@
 
 > Convierte imágenes **PNG y JPG a WebP** con la máxima calidad y el menor peso: sueltas tus imágenes o una carpeta entera y obtienes archivos mucho más livianos, sin elegir calidades ni tocar nada.
 
-[![Versión](https://img.shields.io/badge/versión-v1.2.1-4d74c9)](CHANGELOG.md)
+[![Versión](https://img.shields.io/badge/versión-v1.3.0-4d74c9)](CHANGELOG.md)
 [![CI](https://github.com/MiguelBigott/pngwebp/actions/workflows/ci.yml/badge.svg)](https://github.com/MiguelBigott/pngwebp/actions/workflows/ci.yml)
 [![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![Windows](https://img.shields.io/badge/Windows-10%20·%2011-0078D4)](#-instalación)
@@ -46,6 +46,7 @@
 - **Archivos dañados**: si una imagen está cortada o no es un PNG o JPG de verdad, lo avisa en lugar de convertirla a medias.
 - **Ventana propia**: ventana nativa de Windows (WebView2) con su icono nítido en la barra de tareas.
 - **Parte de [Codex](https://github.com/MiguelBigott/codex)**: el launcher de la suite la instala, la actualiza y la abre.
+- **En tu idioma**: usa el idioma elegido en [Codex](https://github.com/MiguelBigott/codex) (8 idiomas) o, sin Codex, el del PC.
 
 ## 🎯 Cómo decide la calidad
 

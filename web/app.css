@@ -222,3 +222,8 @@ body.maximizada .redim { display: none; }
   * { transition: none !important; }
   .medidor span { animation: none; left: 0; width: 100%; opacity: .6; }
 }
+
+/* Hasta saber el idioma, la interfaz no se muestra (evita ver el español un instante). */
+body.cargando .barra, body.cargando .cuerpo, body.cargando .pie { visibility: hidden; }
+:root:lang(zh) body { font-family: "Inter", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif; }
+:root:lang(ja) body { font-family: "Inter", "Yu Gothic UI", "Meiryo UI", sans-serif; }

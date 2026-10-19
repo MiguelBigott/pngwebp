@@ -6,7 +6,6 @@ import (
 	"context"
 	"embed"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -23,7 +22,7 @@ import (
 	webview2 "github.com/jchv/go-webview2"
 )
 
-const Version = "1.2.1"
+const Version = "1.3.0"
 
 // Puerto fijo: sirve también para detectar si la app ya está abierta.
 const puerto = "127.0.0.1:47831"
@@ -99,8 +98,7 @@ func main() {
 		},
 	})
 	if w == nil {
-		mensaje("PngWebp necesita Microsoft Edge WebView2, que viene con Windows 11. " +
-			"Instálalo desde https://developer.microsoft.com/microsoft-edge/webview2/ y vuelve a abrir PngWebp.")
+		mensaje(textosDe(idiomaApp()).FaltaWebView)
 		return
 	}
 	defer w.Destroy()
@@ -186,28 +184,32 @@ func responder(w http.ResponseWriter, v any) {
 	_ = json.NewEncoder(w).Encode(v)
 }
 
-func fallar(w http.ResponseWriter, status int, msg string) {
+// fallar responde con un error que la interfaz muestra en su idioma.
+func fallar(w http.ResponseWriter, status int, m *Mensaje) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(map[string]string{"error": msg})
+	_ = json.NewEncoder(w).Encode(map[string]*Mensaje{"error": m})
 }
 
 func leerJSON(r *http.Request, v any) error {
 	if r.Method != http.MethodPost {
-		return errors.New("método no permitido")
+		return msj("peticionInvalida")
 	}
-	return json.NewDecoder(http.MaxBytesReader(nil, r.Body, 1<<20)).Decode(v)
+	if err := json.NewDecoder(http.MaxBytesReader(nil, r.Body, 1<<20)).Decode(v); err != nil {
+		return msj("peticionInvalida")
+	}
+	return nil
 }
 
 // Solo aceptamos peticiones de la propia interfaz (evita que otras webs usen la API).
 func soloLocal(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if o := r.Header.Get("Origin"); o != "" && o != "http://"+puerto {
-			fallar(w, http.StatusForbidden, "origen no permitido")
+			fallar(w, http.StatusForbidden, msj("accesoDenegado"))
 			return
 		}
 		if r.Method == http.MethodPost && r.Header.Get("X-PNGWebp") != "1" {
-			fallar(w, http.StatusForbidden, "falta cabecera")
+			fallar(w, http.StatusForbidden, msj("accesoDenegado"))
 			return
 		}
 		h(w, r)
@@ -218,6 +220,7 @@ func (a *App) rutas(mux *http.ServeMux) {
 	mux.HandleFunc("/api/estado", soloLocal(func(w http.ResponseWriter, r *http.Request) {
 		responder(w, map[string]any{
 			"version": Version,
+			"idioma":  idiomaApp(),
 			"config":  a.config(),
 			"motor":   map[string]any{"listo": a.motor() != "", "version": a.versionMotor()},
 			"cola":    a.cola.Snapshot(),
@@ -227,7 +230,7 @@ func (a *App) rutas(mux *http.ServeMux) {
 	// agregar recibe una imagen (el archivo tal cual en el cuerpo) y la pone en la cola.
 	mux.HandleFunc("/api/agregar", soloLocal(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
-			fallar(w, http.StatusMethodNotAllowed, "método no permitido")
+			fallar(w, http.StatusMethodNotAllowed, msj("peticionInvalida"))
 			return
 		}
 		nombre := filepath.Base(strings.ReplaceAll(r.URL.Query().Get("nombre"), "\\", "/"))
@@ -243,13 +246,13 @@ func (a *App) rutas(mux *http.ServeMux) {
 		n, _ := io.ReadFull(cuerpo, cabecera)
 		formato := formatoDe(cabecera[:n])
 		if formato == "" {
-			fallar(w, http.StatusUnsupportedMediaType, nombre+" no es un PNG ni un JPG.")
+			fallar(w, http.StatusUnsupportedMediaType, msj("noPngJpg", "nombre", nombre))
 			return
 		}
 		ruta := filepath.Join(a.entradas, fmt.Sprintf("%d-%d.%s", time.Now().UnixNano(), os.Getpid(), formato))
 		f, err := os.Create(ruta)
 		if err != nil {
-			fallar(w, http.StatusInternalServerError, "no se pudo recibir la imagen")
+			fallar(w, http.StatusInternalServerError, msj("noRecibir"))
 			return
 		}
 		_, _ = f.Write(cabecera[:n])
@@ -257,7 +260,7 @@ func (a *App) rutas(mux *http.ServeMux) {
 		f.Close()
 		if err != nil {
 			_ = os.Remove(ruta)
-			fallar(w, http.StatusRequestEntityTooLarge, nombre+" es demasiado grande (máximo 300 MB).")
+			fallar(w, http.StatusRequestEntityTooLarge, msj("demasiadoGrande", "nombre", nombre))
 			return
 		}
 		id := a.cola.Agregar(nombre, formato, ruta, tamano, copiados+int64(n))
@@ -269,11 +272,11 @@ func (a *App) rutas(mux *http.ServeMux) {
 			Tamano string `json:"tamano"`
 		}
 		if err := leerJSON(r, &req); err != nil {
-			fallar(w, http.StatusBadRequest, err.Error())
+			fallar(w, http.StatusBadRequest, comoMensaje(err))
 			return
 		}
 		if _, ok := tamanos[req.Tamano]; !ok {
-			fallar(w, http.StatusBadRequest, "tamaño desconocido")
+			fallar(w, http.StatusBadRequest, msj("tamanoDesconocido"))
 			return
 		}
 		a.mu.Lock()
@@ -300,7 +303,7 @@ func (a *App) rutas(mux *http.ServeMux) {
 			ID int `json:"id"`
 		}
 		if err := leerJSON(r, &req); err != nil {
-			fallar(w, http.StatusBadRequest, err.Error())
+			fallar(w, http.StatusBadRequest, comoMensaje(err))
 			return
 		}
 		a.cola.Reintentar(req.ID)
@@ -309,7 +312,7 @@ func (a *App) rutas(mux *http.ServeMux) {
 
 	mux.HandleFunc("/api/limpiar", soloLocal(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
-			fallar(w, http.StatusMethodNotAllowed, "método no permitido")
+			fallar(w, http.StatusMethodNotAllowed, msj("peticionInvalida"))
 			return
 		}
 		a.cola.LimpiarTerminadas()
@@ -318,11 +321,11 @@ func (a *App) rutas(mux *http.ServeMux) {
 
 	mux.HandleFunc("/api/carpeta/elegir", soloLocal(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
-			fallar(w, http.StatusMethodNotAllowed, "método no permitido")
+			fallar(w, http.StatusMethodNotAllowed, msj("peticionInvalida"))
 			return
 		}
 		actual := a.config().Carpeta
-		elegida, err := elegirCarpeta("Elige dónde guardar las imágenes WebP", actual)
+		elegida, err := elegirCarpeta(textosDe(idiomaApp()).ElegirCarpeta, actual)
 		if err != nil || elegida == "" {
 			responder(w, map[string]any{"carpeta": actual, "cambiada": false})
 			return

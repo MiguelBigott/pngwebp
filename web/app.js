@@ -11,7 +11,7 @@ async function api(ruta, datos) {
   }
   const r = await fetch(ruta, opciones);
   const json = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(json.error || "Error inesperado");
+  if (!r.ok) throw new Error(json.error ? tm(json.error) : t("errorInesperado"));
   return json;
 }
 
@@ -26,7 +26,7 @@ function avisar(texto, esError) {
 }
 
 function peso(b) {
-  const num = (n, d) => n.toLocaleString("es", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const num = (n, d) => n.toLocaleString(localeActual(), { minimumFractionDigits: d, maximumFractionDigits: d });
   if (b < 1024) return `${b} B`;
   if (b < 1024 * 1024) return `${num(b / 1024, b < 100 * 1024 ? 1 : 0)} KB`;
   return `${num(b / (1024 * 1024), 1)} MB`;
@@ -43,7 +43,7 @@ function subir(archivos) {
   const imagenes = archivos.filter((f) => esImagen(f.name));
   const omitidos = archivos.length - imagenes.length;
   if (!imagenes.length) {
-    if (omitidos) avisar("Solo se convierten imágenes PNG o JPG.", true);
+    if (omitidos) avisar(t("soloPngJpg"), true);
     return;
   }
   const tamano = tamanoElegido();
@@ -54,7 +54,7 @@ function subir(archivos) {
       try {
         const r = await fetch(`/api/agregar?nombre=${encodeURIComponent(f.name)}&tamano=${encodeURIComponent(tamano)}`,
           { method: "POST", headers: { "X-PNGWebp": "1" }, body: f });
-        if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || f.name);
+        if (!r.ok) throw new Error(tm((await r.json().catch(() => ({}))).error) || f.name);
         bien++;
         refrescar();
       } catch (e) {
@@ -62,9 +62,9 @@ function subir(archivos) {
       }
     }
     const partes = [];
-    if (bien) partes.push(bien === 1 ? "1 imagen en camino." : `${bien} imágenes en camino.`);
-    if (omitidos) partes.push(omitidos === 1 ? "Se omitió 1 archivo que no es PNG ni JPG." : `Se omitieron ${omitidos} archivos que no son PNG ni JPG.`);
-    if (fallas.length) partes.push(fallas[0] + (fallas.length > 1 ? ` (y ${fallas.length - 1} más)` : ""));
+    if (bien) partes.push(bien === 1 ? t("enCamino1") : t("enCamino", { n: bien }));
+    if (omitidos) partes.push(omitidos === 1 ? t("omitido1") : t("omitidos", { n: omitidos }));
+    if (fallas.length) partes.push(fallas.length > 1 ? t("yMas", { primero: fallas[0], n: fallas.length - 1 }) : fallas[0]);
     avisar(partes.join(" "), fallas.length > 0 && !bien);
   });
 }
@@ -127,13 +127,11 @@ document.querySelectorAll('input[name="tamano"]').forEach((r) => r.addEventListe
 
 /* ---------------- Las convertidas ---------------- */
 
-const MODO = { "sin-perdida": "sin pérdida", "calidad-alta": "calidad alta" };
-
 function detalle(it) {
   switch (it.estado) {
-    case "cola": return [`${peso(it.antes)} · en espera`];
-    case "convirtiendo": return [`${peso(it.antes)} · convirtiendo…`];
-    case "error": return [it.error || "No se pudo convertir"];
+    case "cola": return [t("enEspera", { peso: peso(it.antes) })];
+    case "convirtiendo": return [t("convirtiendo", { peso: peso(it.antes) })];
+    case "error": return [it.error ? tm(it.error) : t("noConvertir")];
     case "lista": {
       // El ahorro va en la etiqueta de al lado (−87 %); si pesa más, la etiqueta lo avisa.
       return [`${peso(it.antes)} → ${peso(it.despues)}`];
@@ -151,7 +149,7 @@ function boton(texto, fn) {
   return b;
 }
 
-const ESTADO = { cola: "en cola", convirtiendo: "convirtiendo", lista: "", error: "error" };
+const ESTADO = { cola: "estCola", convirtiendo: "estConvirtiendo", error: "estError" };
 const filas = new Map(); // id -> li
 
 function pintarCola(cola) {
@@ -181,24 +179,24 @@ function pintarCola(cola) {
       s.textContent = p.mas;
       return s;
     }));
-    li.querySelector(".detalle2").textContent = it.estado === "lista" ? `${MODO[it.modo] || ""} · ${it.ancho} × ${it.alto}` : "";
+    li.querySelector(".detalle2").textContent = it.estado === "lista" ? `${it.modo ? t("modo." + it.modo) : ""} · ${it.ancho} × ${it.alto}` : "";
     const est = li.querySelector(".est");
-    let etiqueta = ESTADO[it.estado] || "", clase = it.estado, aviso = "";
+    let etiqueta = ESTADO[it.estado] ? t(ESTADO[it.estado]) : "", clase = it.estado, aviso = "";
     if (it.estado === "lista") {
       const dif = Math.round((1 - it.despues / it.antes) * 100);
       etiqueta = dif > 0 ? `−${dif} %` : `+${-dif} %`;
-      if (dif <= 0) { clase = "mas"; aviso = `Pesa ${-dif} % más que el original`; }
+      if (dif <= 0) { clase = "mas"; aviso = t("pesaMas", { n: -dif }); }
     }
     est.className = `est ${clase}`;
     est.textContent = etiqueta;
     est.title = aviso;
 
     const acc = li.querySelector(".acciones");
-    if (acc.dataset.firma !== it.estado) {
-      acc.dataset.firma = it.estado;
+    if (acc.dataset.firma !== it.estado + idiomaActual) {
+      acc.dataset.firma = it.estado + idiomaActual;
       acc.replaceChildren();
-      if (it.estado === "lista") acc.append(boton("Mostrar", () => api("/api/carpeta/abrir", { id: it.id })));
-      if (it.estado === "error") acc.append(boton("Reintentar", () => api("/api/reintentar", { id: it.id }).then(refrescar)));
+      if (it.estado === "lista") acc.append(boton(t("mostrar"), () => api("/api/carpeta/abrir", { id: it.id })));
+      if (it.estado === "error") acc.append(boton(t("reintentar"), () => api("/api/reintentar", { id: it.id }).then(refrescar)));
     }
   });
   for (const [id, li] of filas) {
@@ -214,8 +212,9 @@ function pintarCola(cola) {
   total.hidden = !listas.length || despues >= antes;
   if (!total.hidden) {
     const n = listas.length;
-    total.replaceChildren("Ahorraste ", Object.assign(document.createElement("b"), { textContent: peso(antes - despues) }),
-      ` en ${n} ${n === 1 ? "imagen" : "imágenes"}: ${n === 1 ? "pesa" : "pesan"} un ${Math.round((1 - despues / antes) * 100)} % menos.`);
+    // La frase va traducida y el peso ahorrado, en negrita, donde diga {peso}.
+    const [antesPeso, despuesPeso] = t(n === 1 ? "total1" : "total", { n, pct: Math.round((1 - despues / antes) * 100), peso: "\u0000" }).split("\u0000");
+    total.replaceChildren(antesPeso, Object.assign(document.createElement("b"), { textContent: peso(antes - despues) }), despuesPeso ?? "");
   }
   const pendientes = cola.filter((it) => it.estado === "cola" || it.estado === "convirtiendo").length;
   document.title = pendientes ? `PngWebp (${pendientes})` : "PngWebp";
@@ -237,7 +236,7 @@ function pintarConfig(cfg, primera) {
 
 function pintarMotor(m) {
   const v = $("#ver-motor");
-  v.textContent = m.listo ? (m.version || "instalado") : "no encontrado";
+  v.textContent = m.listo ? (m.version || t("instalado")) : t("noEncontrado");
   v.classList.toggle("falta", !m.listo);
   $("#motor-falta").hidden = m.listo;
 }
@@ -247,7 +246,7 @@ $("#btn-cambiar-carpeta").addEventListener("click", async (e) => {
   try {
     const r = await api("/api/carpeta/elegir", {});
     $("#ruta-destino").textContent = r.carpeta;
-    if (r.cambiada) avisar("Las imágenes WebP se guardarán en la nueva carpeta.");
+    if (r.cambiada) avisar(t("carpetaNueva"));
   } finally {
     e.currentTarget.disabled = false;
   }
@@ -260,10 +259,15 @@ let primera = true;
 async function refrescar() {
   try {
     const e = await api("/api/estado");
+    // Idioma: el que esté elegido en Codex (si cambia allí, la app cambia sola).
+    if (e.idioma !== idiomaActual || primera) {
+      aplicarIdioma(e.idioma);
+      $("#version").textContent = t("version", { version: e.version });
+      document.body.classList.remove("cargando");
+    }
     pintarConfig(e.config, primera);
     pintarMotor(e.motor);
     pintarCola(e.cola);
-    if (primera) $("#version").textContent = `PngWebp ${e.version} · de la biblioteca Codex`;
     primera = false;
   } catch {
     /* el servidor puede estar cerrándose */
@@ -286,7 +290,7 @@ if (typeof window.caArrastrar === "function") {
   const actualizarMaximizada = async () => {
     const max = await window.caMaximizada();
     document.body.classList.toggle("maximizada", max);
-    $("#btn-max").setAttribute("aria-label", max ? "Restaurar" : "Maximizar");
+    $("#btn-max").setAttribute("aria-label", t(max ? "restaurar" : "maximizar"));
   };
   barra.addEventListener("dblclick", (ev) => {
     if (!ev.target.closest(interactivo)) window.caMaximizar().then(actualizarMaximizada);
@@ -302,3 +306,6 @@ if (typeof window.caArrastrar === "function") {
 } else {
   document.querySelectorAll(".redim").forEach((r) => r.remove());
 }
+
+// Si el servidor no responde, la interfaz se muestra igual (en español).
+setTimeout(() => document.body.classList.remove("cargando"), 2000);

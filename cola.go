@@ -29,18 +29,18 @@ const (
 )
 
 type Item struct {
-	ID      int    `json:"id"`
-	Nombre  string `json:"nombre"`  // nombre del archivo original
-	Salida  string `json:"salida"`  // nombre del .webp
-	Tamano  string `json:"tamano"`  // original | 1:1 | 16:9 | 9:16
-	Estado  string `json:"estado"`  // cola | convirtiendo | lista | error
-	Antes   int64  `json:"antes"`   // bytes del original
-	Despues int64  `json:"despues"` // bytes del WebP
-	Modo    string `json:"modo"`    // sin-perdida | calidad-alta
-	Ancho   int    `json:"ancho"`
-	Alto    int    `json:"alto"`
-	Archivo string `json:"archivo"` // ruta completa del .webp
-	Error   string `json:"error"`
+	ID      int      `json:"id"`
+	Nombre  string   `json:"nombre"`  // nombre del archivo original
+	Salida  string   `json:"salida"`  // nombre del .webp
+	Tamano  string   `json:"tamano"`  // original | 1:1 | 16:9 | 9:16
+	Estado  string   `json:"estado"`  // cola | convirtiendo | lista | error
+	Antes   int64    `json:"antes"`   // bytes del original
+	Despues int64    `json:"despues"` // bytes del WebP
+	Modo    string   `json:"modo"`    // sin-perdida | calidad-alta
+	Ancho   int      `json:"ancho"`
+	Alto    int      `json:"alto"`
+	Archivo string   `json:"archivo"` // ruta completa del .webp
+	Error   *Mensaje `json:"error"`
 
 	entrada string // copia temporal del original
 	formato string // png | jpg
@@ -133,7 +133,7 @@ func (q *Cola) Reintentar(id int) {
 		q.mu.Unlock()
 		return
 	}
-	it.Estado, it.Error = "cola", ""
+	it.Estado, it.Error = "cola", nil
 	q.mu.Unlock()
 	q.trabajo <- it
 }
@@ -181,7 +181,7 @@ func (q *Cola) convertir(it *Item) {
 			return
 		}
 		log.Printf("conversión %q: %v", it.Nombre, err)
-		q.poner(it, func() { it.Estado, it.Error = "error", err.Error() })
+		q.poner(it, func() { it.Estado, it.Error = "error", comoMensaje(err) })
 		return
 	}
 	_ = os.Remove(it.entrada)
@@ -203,7 +203,7 @@ type resultado struct {
 func (a *App) convertirImagen(ctx context.Context, entrada, formato, nombre, tamano string) (resultado, error) {
 	cwebp := a.motor()
 	if cwebp == "" {
-		return resultado{}, errors.New("falta el motor WebP: reinstala PngWebp")
+		return resultado{}, msj("faltaMotor")
 	}
 	t, ok := tamanos[tamano]
 	if !ok {
@@ -211,7 +211,7 @@ func (a *App) convertirImagen(ctx context.Context, entrada, formato, nombre, tam
 	}
 	carpeta := a.config().Carpeta
 	if err := os.MkdirAll(carpeta, 0o755); err != nil {
-		return resultado{}, fmt.Errorf("no se pudo crear la carpeta de destino: %v", err)
+		return resultado{}, msj("carpetaNoCreada", "detalle", err.Error())
 	}
 
 	orientacion := 1
@@ -239,7 +239,7 @@ func (a *App) convertirImagen(ctx context.Context, entrada, formato, nombre, tam
 		ancho, alto = img.Rect.Dx(), img.Rect.Dy()
 		fuente = strings.TrimSuffix(entrada, filepath.Ext(entrada)) + "-preparada.png"
 		if err := guardarPNG(img, fuente); err != nil {
-			return resultado{}, fmt.Errorf("no se pudo preparar la imagen: %v", err)
+			return resultado{}, msj("noPreparar", "detalle", err.Error())
 		}
 		defer os.Remove(fuente)
 	}
@@ -289,7 +289,7 @@ func (a *App) convertirImagen(ctx context.Context, entrada, formato, nombre, tam
 	destino, err := guardarSinPisar(elegido, carpeta, base+t.Sufijo, ".webp")
 	if err != nil {
 		_ = os.Remove(elegido)
-		return resultado{}, fmt.Errorf("no se pudo guardar el WebP: %v", err)
+		return resultado{}, msj("noGuardar", "detalle", err.Error())
 	}
 	return resultado{archivo: destino, bytes: tamanoArchivo(destino), modo: modo, ancho: ancho, alto: alto}, nil
 }
@@ -307,7 +307,7 @@ func (a *App) cwebp(ctx context.Context, motor, entrada, salida string, opciones
 			return ctx.Err()
 		}
 		log.Printf("cwebp %v: %v\n%s", args, err, out)
-		return errors.New("el motor WebP no pudo convertir esta imagen")
+		return msj("motorNoConvirtio")
 	}
 	return nil
 }

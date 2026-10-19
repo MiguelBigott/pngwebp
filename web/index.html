@@ -7,7 +7,7 @@
 <link rel="icon" href="logo.svg">
 <link rel="stylesheet" href="app.css">
 </head>
-<body>
+<body class="cargando">
 
 <div class="redim redim-arriba" data-borde="arriba"></div>
 <div class="redim redim-arriba-izq" data-borde="arriba-izq"></div>
@@ -18,9 +18,9 @@
   <div class="marca"><img class="marca-logo" src="logo.svg" alt=""><span class="marca-texto">pngwebp</span></div>
   <div class="controles-caja">
     <div class="controles" id="controles" hidden>
-      <button type="button" id="btn-min" aria-label="Minimizar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg></button>
-      <button type="button" id="btn-max" aria-label="Maximizar"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="6.5" width="11" height="11"/></svg></button>
-      <button type="button" id="btn-cerrar" class="cerrar" aria-label="Cerrar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
+      <button type="button" id="btn-min" aria-label="Minimizar" data-t-aria="minimizar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg></button>
+      <button type="button" id="btn-max" aria-label="Maximizar" data-t-aria="maximizar"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="6.5" width="11" height="11"/></svg></button>
+      <button type="button" id="btn-cerrar" class="cerrar" aria-label="Cerrar" data-t-aria="cerrar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
     </div>
   </div>
 </header>
@@ -28,35 +28,36 @@
 <div class="cuerpo">
   <!-- Panel izquierdo: las imágenes nuevas y cómo convertirlas -->
   <section class="panel nuevas" aria-labelledby="h-nuevas">
-    <h1 class="ruta" id="h-nuevas">nuevas imágenes</h1>
+    <h1 class="ruta" id="h-nuevas" data-t="nuevas">nuevas imágenes</h1>
 
     <div class="soltar" id="soltar">
-      <p><b>Suelta aquí tus imágenes o una carpeta</b>png o jpg · o elige <button class="enlace" id="btn-archivos" type="button">archivos</button>
-        o <button class="enlace" id="btn-carpeta" type="button">una carpeta</button></p>
+      <p><b data-t="soltarTitulo">Suelta aquí tus imágenes o una carpeta</b><span data-t="soltarElige">png o jpg · o elige</span>
+        <button class="enlace" id="btn-archivos" type="button" data-t="archivos">archivos</button>
+        <span data-t="o">o</span> <button class="enlace" id="btn-carpeta" type="button" data-t="unaCarpeta">una carpeta</button></p>
       <input id="in-archivos" type="file" accept=".png,.jpg,.jpeg,image/png,image/jpeg" multiple hidden>
       <input id="in-carpeta" type="file" webkitdirectory hidden>
     </div>
 
     <div class="faltan" id="motor-falta" hidden>
-      <p>Falta el motor WebP en la carpeta de PngWebp. Vuelve a instalar la app para recuperarlo.</p>
+      <p data-t="motorFalta">Falta el motor WebP en la carpeta de PngWebp. Vuelve a instalar la app para recuperarlo.</p>
     </div>
 
     <fieldset class="tamanos">
-      <legend>tamaño</legend>
+      <legend data-t="tamano">tamaño</legend>
       <div class="tamanos-fila">
-        <label><input type="radio" name="tamano" value="original"><span><i class="glifo" style="width:22px;height:16px"></i>original<small>como viene</small></span></label>
+        <label><input type="radio" name="tamano" value="original"><span><i class="glifo" style="width:22px;height:16px"></i><span data-t="original">original</span><small data-t="comoViene">como viene</small></span></label>
         <label><input type="radio" name="tamano" value="1:1"><span><i class="glifo" style="width:20px;height:20px"></i>1:1<small>1000×1000</small></span></label>
         <label><input type="radio" name="tamano" value="16:9"><span><i class="glifo" style="width:24px;height:14px"></i>16:9<small>1920×1080</small></span></label>
         <label><input type="radio" name="tamano" value="9:16"><span><i class="glifo" style="width:13px;height:22px"></i>9:16<small>1080×1920</small></span></label>
       </div>
     </fieldset>
 
-    <p class="nota"><b>Máxima calidad, el menor peso.</b> Capturas y logos quedan idénticos píxel a píxel; las fotos, con calidad idéntica a la vista. Las proporciones no deforman la imagen: lo que sobra queda transparente.</p>
+    <p class="nota"><b data-t="notaTitulo">Máxima calidad, el menor peso.</b> <span data-t="notaTexto">Capturas y logos quedan idénticos píxel a píxel; las fotos, con calidad idéntica a la vista. Las proporciones no deforman la imagen: lo que sobra queda transparente.</span></p>
 
-    <p class="destino"><span>se guardan en</span>
+    <p class="destino"><span data-t="seGuardan">se guardan en</span>
       <span class="destino-acciones">
-        <button class="enlace" id="btn-cambiar-carpeta" type="button">cambiar</button>
-        <button class="enlace" id="btn-abrir-carpeta" type="button">abrir carpeta</button>
+        <button class="enlace" id="btn-cambiar-carpeta" type="button" data-t="cambiar">cambiar</button>
+        <button class="enlace" id="btn-abrir-carpeta" type="button" data-t="abrirCarpeta">abrir carpeta</button>
       </span>
       <b id="ruta-destino" title="">…</b>
     </p>
@@ -65,22 +66,22 @@
   <!-- Panel derecho: las imágenes convertidas -->
   <section class="panel convertidas" aria-labelledby="h-convertidas">
     <div class="cabecera">
-      <h1 class="ruta" id="h-convertidas">convertidas</h1>
-      <button class="enlace" id="btn-limpiar" type="button" hidden>quitar terminadas</button>
+      <h1 class="ruta" id="h-convertidas" data-t="convertidas">convertidas</h1>
+      <button class="enlace" id="btn-limpiar" type="button" hidden data-t="quitarTerminadas">quitar terminadas</button>
     </div>
     <ol class="lista" id="lista"></ol>
-    <p class="vacio" id="vacio">Todavía no hay imágenes. Suéltalas en el panel de la izquierda.</p>
+    <p class="vacio" id="vacio" data-t="vacio">Todavía no hay imágenes. Suéltalas en el panel de la izquierda.</p>
     <p class="total" id="total" hidden></p>
   </section>
 </div>
 
 <footer class="pie">
-  <span>motor webp <span id="ver-motor">…</span> de google · todo ocurre en tu pc</span>
+  <span><span data-t="pieMotor">motor webp</span> <span id="ver-motor">…</span> <span data-t="pieGoogle">de google · todo ocurre en tu pc</span></span>
   <span class="pie-espacio"></span>
   <span id="version"></span>
 </footer>
 
-<div class="arrastre" id="arrastre" hidden><p>Suelta para convertir a WebP</p></div>
+<div class="arrastre" id="arrastre" hidden><p data-t="sueltaConvertir">Suelta para convertir a WebP</p></div>
 <div class="aviso" id="aviso" role="status" hidden></div>
 
 <template id="tpl-item">
@@ -99,6 +100,7 @@
   </li>
 </template>
 
+<script src="i18n.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
