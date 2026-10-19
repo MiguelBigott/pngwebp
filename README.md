@@ -6,10 +6,11 @@
 
 > Convierte imágenes **PNG y JPG a WebP** con la máxima calidad y el menor peso: sueltas tus imágenes o una carpeta entera y obtienes archivos mucho más livianos, sin elegir calidades ni tocar nada.
 
-[![Versión](https://img.shields.io/badge/versión-v1.2.0-4d74c9)](CHANGELOG.md)
+[![Versión](https://img.shields.io/badge/versión-v1.2.1-4d74c9)](CHANGELOG.md)
 [![CI](https://github.com/MiguelBigott/pngwebp/actions/workflows/ci.yml/badge.svg)](https://github.com/MiguelBigott/pngwebp/actions/workflows/ci.yml)
 [![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![Windows](https://img.shields.io/badge/Windows-10%20·%2011-0078D4)](#-instalación)
+[![Licencia](https://img.shields.io/badge/licencia-MIT-3f9d6e)](LICENSE)
 [![Motor](https://img.shields.io/badge/motor-libwebp%201.6.0-c9a45c)](https://developers.google.com/speed/webp)
 [![Codex](https://img.shields.io/badge/suite-Codex-c9a45c)](https://github.com/MiguelBigott/codex)
 
@@ -31,6 +32,7 @@
 - [Instalación](#-instalación)
 - [Compilar](#️-compilar)
 - [Seguridad y privacidad](#-seguridad-y-privacidad)
+- [Licencia](#️-licencia)
 - [Créditos](#️-créditos)
 
 ## ✨ Funciones
@@ -105,6 +107,12 @@ Para revisar la interfaz en un navegador, sin ventana, ejecuta la app con `PNGWE
 - La API rechaza peticiones con un origen distinto al de la propia app y las acciones exigen una cabecera propia, así que una página web abierta en el navegador no puede usarla.
 - Cada imagen se reconoce por su contenido, no por la extensión, y tiene un tope de 300 MB.
 - El motor se baja al compilar **solo desde Google**: el archivo está firmado con la clave de publicación de WebP (`6B0E 6B70 976D E303 EDF2 F601 F9C3 D6BD B823 2B5D`) y el script verifica su SHA-256.
+
+## ⚖️ Licencia
+
+**Creado por [Miguel Bigott](https://github.com/MiguelBigott)** y publicado con licencia [MIT](LICENSE): cualquiera puede usarlo, copiarlo, modificarlo y compartirlo libremente, también en sus propios proyectos, siempre que mantenga el aviso de autor. Se entrega tal cual, sin garantías.
+
+El motor WebP de Google conserva su licencia BSD (en `componentes/LICENSE-libwebp.txt`), y lo que va dentro de PngWebp.exe (Go, go-webview2, golang.org/x/image y las tipografías) está en `LICENCIAS-TERCEROS.txt`, junto a la app.
 
 ## 🖋️ Créditos
 
