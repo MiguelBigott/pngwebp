@@ -8,14 +8,14 @@ SetCompressor /SOLID lzma
 !ifndef VERSION
   !define VERSION "0.0.0"
 !endif
-!define APP "PNGWebp"
-!define EXE "PNGWebp.exe"
+!define APP "PngWebp"
+!define EXE "PngWebp.exe"
 !define REGAPP "Software\${APP}"
 !define UNINST "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP}"
 
 Name "${APP}"
-OutFile "..\dist\PNGWebp-Setup-${VERSION}.exe"
-; Por defecto en C:\Program Files\PNGWebp. Codex lo instala en C:\Program Files\Codex\PNGWebp (/D=).
+OutFile "..\dist\PngWebp-Setup-${VERSION}.exe"
+; Por defecto en C:\Program Files\PngWebp. Codex lo instala en C:\Program Files\Codex\PngWebp (/D=).
 InstallDir "$PROGRAMFILES64\${APP}"
 RequestExecutionLevel admin
 ; Nítido con la escala de pantalla de Windows (125 %, 150 %...).
@@ -37,7 +37,7 @@ VIAddVersionKey /LANG=1034 "LegalCopyright" "${APP}"
 !define MUI_ABORTWARNING
 
 !define MUI_WELCOMEPAGE_TITLE "Instalar ${APP}"
-!define MUI_WELCOMEPAGE_TEXT "Convierte imágenes PNG y JPG a WebP con la máxima calidad y el menor peso.$\r$\n$\r$\nSe instala con el motor WebP de Google incluido. Las imágenes convertidas se guardarán en Imágenes\PNGWebp (puedes cambiarlo desde la app)."
+!define MUI_WELCOMEPAGE_TEXT "Convierte imágenes PNG y JPG a WebP con la máxima calidad y el menor peso.$\r$\n$\r$\nSe instala con el motor WebP de Google incluido. Las imágenes convertidas se guardarán en Imágenes\PngWebp (puedes cambiarlo desde la app)."
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_INSTFILES
 

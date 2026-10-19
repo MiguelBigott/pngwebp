@@ -203,7 +203,7 @@ type resultado struct {
 func (a *App) convertirImagen(ctx context.Context, entrada, formato, nombre, tamano string) (resultado, error) {
 	cwebp := a.motor()
 	if cwebp == "" {
-		return resultado{}, errors.New("falta el motor WebP: reinstala PNGWebp")
+		return resultado{}, errors.New("falta el motor WebP: reinstala PngWebp")
 	}
 	t, ok := tamanos[tamano]
 	if !ok {

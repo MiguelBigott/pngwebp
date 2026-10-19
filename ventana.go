@@ -57,7 +57,7 @@ const (
 	swpNoSize       = 0x0001
 	swpNoZOrder     = 0x0004
 
-	tituloVentana = "PNGWebp"
+	tituloVentana = "PngWebp"
 
 	// idIcono: go-winres guarda el icono del .exe como recurso número 1.
 	idIcono = 1

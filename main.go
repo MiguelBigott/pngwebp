@@ -1,4 +1,4 @@
-// PNGWebp — convierte imágenes PNG y JPG a WebP con la máxima calidad y el menor peso.
+// PngWebp — convierte imágenes PNG y JPG a WebP con la máxima calidad y el menor peso.
 // Servidor local + interfaz web embebida en una ventana nativa (WebView2).
 package main
 
@@ -23,7 +23,7 @@ import (
 	webview2 "github.com/jchv/go-webview2"
 )
 
-const Version = "1.1.0"
+const Version = "1.2.0"
 
 // Puerto fijo: sirve también para detectar si la app ya está abierta.
 const puerto = "127.0.0.1:47831"
@@ -52,6 +52,7 @@ type Config struct {
 
 func main() {
 	dataDir := carpetaDatos()
+	corregirMayusculas(dataDir)
 	_ = os.MkdirAll(dataDir, 0o755)
 	logFile, err := os.OpenFile(filepath.Join(dataDir, "pngwebp.log"), os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o644)
 	if err == nil {
@@ -98,8 +99,8 @@ func main() {
 		},
 	})
 	if w == nil {
-		mensaje("PNGWebp necesita Microsoft Edge WebView2, que viene con Windows 11. " +
-			"Instálalo desde https://developer.microsoft.com/microsoft-edge/webview2/ y vuelve a abrir PNGWebp.")
+		mensaje("PngWebp necesita Microsoft Edge WebView2, que viene con Windows 11. " +
+			"Instálalo desde https://developer.microsoft.com/microsoft-edge/webview2/ y vuelve a abrir PngWebp.")
 		return
 	}
 	defer w.Destroy()
@@ -127,6 +128,12 @@ func (a *App) cargarConfig() {
 	}
 	if a.cfg.Carpeta == "" {
 		a.cfg.Carpeta = carpetaSalidaPorDefecto()
+	}
+	// Desde la 1.2.0 la carpeta se llama como la app («PngWebp»): se corrige la ruta guardada
+	// y las mayúsculas de la carpeta si ya existía.
+	if def := carpetaSalidaPorDefecto(); strings.EqualFold(a.cfg.Carpeta, def) {
+		a.cfg.Carpeta = def
+		corregirMayusculas(def)
 	}
 	if _, ok := tamanos[a.cfg.Tamano]; !ok {
 		a.cfg.Tamano = "original"

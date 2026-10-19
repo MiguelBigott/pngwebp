@@ -1,4 +1,4 @@
-# Compila PNGWebp.exe y el instalador en dist\.
+# Compila PngWebp.exe y el instalador en dist\.
 # Requiere: Go, NSIS (makensis) y go-winres (go install github.com/tc-hib/go-winres@latest).
 #
 # El motor WebP (cwebp.exe) sale de la compilación oficial de Google para Windows, se verifica
@@ -16,7 +16,7 @@ if (-not $goExe) { $goExe = 'C:\Program Files\Go\bin\go.exe' }
 $winres = Join-Path (& $goExe env GOPATH) 'bin\go-winres.exe'
 $makensis = 'C:\Program Files (x86)\NSIS\makensis.exe'
 
-Write-Host "PNGWebp $version"
+Write-Host "PngWebp $version"
 
 # ---------- Motor WebP ----------
 # libwebp 1.6.0 para Windows x64, de https://developers.google.com/speed/webp/download.
@@ -55,13 +55,13 @@ Write-Host "Motor WebP $verMotor"
 # Icono, manifiesto y datos de versión dentro del .exe
 & $winres simply --arch amd64 --out rsrc --manifest gui `
     --icon build\app.ico `
-    --product-name PNGWebp --file-description 'PNGWebp - convierte imágenes a WebP' `
+    --product-name PngWebp --file-description 'PngWebp - convierte imágenes a WebP' `
     --product-version $version --file-version $version `
-    --original-filename PNGWebp.exe --copyright PNGWebp
+    --original-filename PngWebp.exe --copyright PngWebp
 if ($LASTEXITCODE) { throw 'go-winres falló' }
 
 New-Item -ItemType Directory -Force dist | Out-Null
-& $goExe build -trimpath -ldflags '-H windowsgui -s -w' -o dist\PNGWebp.exe .
+& $goExe build -trimpath -ldflags '-H windowsgui -s -w' -o dist\PngWebp.exe .
 if ($LASTEXITCODE) { throw 'go build falló' }
 
 # La app busca el motor en la carpeta "componentes" junto a su .exe.

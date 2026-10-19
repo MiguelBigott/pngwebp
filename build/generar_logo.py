@@ -1,4 +1,4 @@
-"""Logo de PNGWebp «Lámina», en el estilo del códice de Codex: una lámina de pergamino con la
+"""Logo de PngWebp «Lámina», en el estilo del códice de Codex: una lámina de pergamino con la
 esquina doblada, un sol de oro, montañas de tinta y el marcapáginas rojo de la rúbrica.
 
     python build/generar_logo.py

@@ -27,20 +27,20 @@ func comando(ctx context.Context, nombre string, args ...string) *exec.Cmd {
 
 func carpetaDatos() string {
 	if d := os.Getenv("LOCALAPPDATA"); d != "" {
-		return filepath.Join(d, "PNGWebp")
+		return filepath.Join(d, "PngWebp")
 	}
 	d, _ := os.UserConfigDir()
-	return filepath.Join(d, "PNGWebp")
+	return filepath.Join(d, "PngWebp")
 }
 
-// carpetaSalidaPorDefecto devuelve "PNGWebp" dentro de la carpeta Imágenes
+// carpetaSalidaPorDefecto devuelve "PngWebp" dentro de la carpeta Imágenes
 // del usuario (respeta si la movió a otro disco).
 func carpetaSalidaPorDefecto() string {
 	if v := carpetaImagenes(); v != "" {
-		return filepath.Join(v, "PNGWebp")
+		return filepath.Join(v, "PngWebp")
 	}
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, "Pictures", "PNGWebp")
+	return filepath.Join(home, "Pictures", "PngWebp")
 }
 
 // FOLDERID_Pictures {33E28130-4E1E-4676-835A-98395C3BC3BB}

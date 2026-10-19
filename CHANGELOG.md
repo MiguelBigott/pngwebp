@@ -3,6 +3,12 @@
 Todas las versiones siguen [Versionado Semántico](https://semver.org/lang/es/). Cada una tiene su
 etiqueta `vX.Y.Z` y su página en [Releases](../../releases).
 
+## [1.2.0] - 2026-10-19
+
+### Cambiado
+- La app se llama **PngWebp**, igual que en Codex: ventana, instalador, ejecutable y textos.
+- La carpeta de salida se llama igual que la app: `Imágenes\PngWebp`. Si ya existía como `Imágenes\PNGWebp`, se corrigen sus mayúsculas sin mover nada, y la ruta guardada se actualiza sola.
+
 ## [1.1.0] - 2026-10-18
 
 ### Cambiado
@@ -31,5 +37,6 @@ en 1000 × 1000 con calidad 0,85.
 - Ventana nativa de Windows (WebView2) con icono nítido en la barra de tareas.
 - Forma parte de la suite [Codex](https://github.com/MiguelBigott/codex).
 
+[1.2.0]: https://github.com/MiguelBigott/pngwebp/releases/tag/v1.2.0
 [1.1.0]: https://github.com/MiguelBigott/pngwebp/releases/tag/v1.1.0
 [1.0.0]: https://github.com/MiguelBigott/pngwebp/releases/tag/v1.0.0

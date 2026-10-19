@@ -218,7 +218,7 @@ function pintarCola(cola) {
       ` en ${n} ${n === 1 ? "imagen" : "imágenes"}: ${n === 1 ? "pesa" : "pesan"} un ${Math.round((1 - despues / antes) * 100)} % menos.`);
   }
   const pendientes = cola.filter((it) => it.estado === "cola" || it.estado === "convirtiendo").length;
-  document.title = pendientes ? `PNGWebp (${pendientes})` : "PNGWebp";
+  document.title = pendientes ? `PngWebp (${pendientes})` : "PngWebp";
 }
 
 $("#btn-limpiar").addEventListener("click", () => api("/api/limpiar", {}).then(refrescar));
@@ -263,7 +263,7 @@ async function refrescar() {
     pintarConfig(e.config, primera);
     pintarMotor(e.motor);
     pintarCola(e.cola);
-    if (primera) $("#version").textContent = `PNGWebp ${e.version} · de la biblioteca Codex`;
+    if (primera) $("#version").textContent = `PngWebp ${e.version} · de la biblioteca Codex`;
     primera = false;
   } catch {
     /* el servidor puede estar cerrándose */

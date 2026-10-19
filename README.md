@@ -1,12 +1,12 @@
 <div align="center">
 
-<img src="build/logo.png" alt="Logo de PNGWebp" width="88">
+<img src="build/logo.png" alt="Logo de PngWebp" width="88">
 
-# PNGWebp
+# PngWebp
 
 > Convierte imágenes **PNG y JPG a WebP** con la máxima calidad y el menor peso: sueltas tus imágenes o una carpeta entera y obtienes archivos mucho más livianos, sin elegir calidades ni tocar nada.
 
-[![Versión](https://img.shields.io/badge/versión-v1.1.0-4d74c9)](CHANGELOG.md)
+[![Versión](https://img.shields.io/badge/versión-v1.2.0-4d74c9)](CHANGELOG.md)
 [![CI](https://github.com/MiguelBigott/pngwebp/actions/workflows/ci.yml/badge.svg)](https://github.com/MiguelBigott/pngwebp/actions/workflows/ci.yml)
 [![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![Windows](https://img.shields.io/badge/Windows-10%20·%2011-0078D4)](#-instalación)
@@ -68,11 +68,11 @@ Un PNG sale sin pérdida si así pesa como mucho un 20 % más que con pérdida. 
 
 ## 📦 Instalación
 
-Descarga `PNGWebp-Setup-<versión>.exe` desde [Releases](../../releases/latest), o instálalo desde [Codex](https://github.com/MiguelBigott/codex).
+Descarga `PngWebp-Setup-<versión>.exe` desde [Releases](../../releases/latest), o instálalo desde [Codex](https://github.com/MiguelBigott/codex).
 
-- Se instala en `C:\Program Files\PNGWebp` (desde Codex, en `C:\Program Files\Codex\PNGWebp`) con el motor WebP en `componentes`.
-- Las imágenes convertidas van por defecto a `Imágenes\PNGWebp`; se puede cambiar desde la app.
-- La configuración se guarda en `%LOCALAPPDATA%\PNGWebp`.
+- Se instala en `C:\Program Files\PngWebp` (desde Codex, en `C:\Program Files\Codex\PngWebp`) con el motor WebP en `componentes`.
+- Las imágenes convertidas van por defecto a `Imágenes\PngWebp`; se puede cambiar desde la app.
+- La configuración se guarda en `%LOCALAPPDATA%\PngWebp`.
 - Al desinstalar se borran el programa, el motor y la configuración; **tus imágenes no se tocan**.
 
 ## 🛠️ Compilar
@@ -84,7 +84,7 @@ Requisitos: [Go](https://go.dev/dl), [NSIS](https://nsis.sourceforge.io) y go-wi
 .\build\compilar.ps1
 ```
 
-Genera `dist/PNGWebp.exe`, `dist/componentes/` y `dist/PNGWebp-Setup-<versión>.exe`. La primera vez baja
+Genera `dist/PngWebp.exe`, `dist/componentes/` y `dist/PngWebp-Setup-<versión>.exe`. La primera vez baja
 libwebp de la [página oficial de Google](https://developers.google.com/speed/webp/download), verifica su
 SHA-256 y guarda `cwebp.exe` con su licencia en `build/componentes/` (fuera de git).
 
