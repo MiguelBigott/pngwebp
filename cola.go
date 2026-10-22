@@ -25,7 +25,9 @@ const (
 	// Un PNG sale sin pérdida si pesa como mucho un 20 % más que con pérdida.
 	margenSinPerdida = 1.2
 	// Hasta este tamaño se vuelve a comprimir sin pérdida al máximo (-z 9): más lento, ~10 % menos.
-	pixelesCompresionMaxima = 8_000_000
+	pixelesCompresionMaxima       = 8_000_000
+	maxElementosCola              = 500
+	maxBytesCola            int64 = 1 << 30
 )
 
 type Item struct {
@@ -47,33 +49,39 @@ type Item struct {
 }
 
 type Cola struct {
-	mu      sync.Mutex
-	items   []*Item
-	next    int
-	app     *App
-	trabajo chan *Item
-	ctx     context.Context
-	cancel  context.CancelFunc
+	mu              sync.Mutex
+	items           []*Item
+	bytesPendientes int64
+	next            int
+	app             *App
+	trabajo         chan *Item
+	ctx             context.Context
+	cancel          context.CancelFunc
 }
 
 func NuevaCola(app *App) *Cola {
 	ctx, cancel := context.WithCancel(context.Background())
-	q := &Cola{app: app, next: 1, trabajo: make(chan *Item, 10000), ctx: ctx, cancel: cancel}
+	q := &Cola{app: app, next: 1, trabajo: make(chan *Item, maxElementosCola), ctx: ctx, cancel: cancel}
 	// Varias imágenes a la vez; cada conversión además usa varios núcleos (-mt).
-	for i := 0; i < max(1, min(4, runtime.NumCPU()/2)); i++ {
+	for i := 0; i < max(1, min(2, runtime.NumCPU()/2)); i++ {
 		go q.trabajar()
 	}
 	return q
 }
 
-func (q *Cola) Agregar(nombre, formato, entrada, tamano string, bytes int64) int {
+func (q *Cola) Agregar(nombre, formato, entrada, tamano string, bytes int64) (int, error) {
 	q.mu.Lock()
+	if len(q.items) >= maxElementosCola || bytes < 0 || bytes > maxBytesCola-q.bytesPendientes {
+		q.mu.Unlock()
+		return 0, msj("colaLlena")
+	}
 	it := &Item{ID: q.next, Nombre: nombre, Tamano: tamano, Estado: "cola", Antes: bytes, entrada: entrada, formato: formato}
 	q.next++
 	q.items = append(q.items, it)
+	q.bytesPendientes += bytes
 	q.mu.Unlock()
 	q.trabajo <- it
-	return it.ID
+	return it.ID, nil
 }
 
 func (q *Cola) Snapshot() []Item {
@@ -146,6 +154,8 @@ func (q *Cola) LimpiarTerminadas() {
 		if it.Estado == "lista" || it.Estado == "error" {
 			if it.entrada != "" {
 				_ = os.Remove(it.entrada)
+				q.bytesPendientes -= it.Antes
+				it.entrada = ""
 			}
 			continue
 		}
@@ -186,6 +196,7 @@ func (q *Cola) convertir(it *Item) {
 	}
 	_ = os.Remove(it.entrada)
 	q.poner(it, func() {
+		q.bytesPendientes -= it.Antes
 		it.Estado, it.entrada = "lista", ""
 		it.Archivo, it.Salida, it.Despues = res.archivo, filepath.Base(res.archivo), res.bytes
 		it.Modo, it.Ancho, it.Alto = res.modo, res.ancho, res.alto

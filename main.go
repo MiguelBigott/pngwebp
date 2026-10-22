@@ -22,7 +22,7 @@ import (
 	webview2 "github.com/jchv/go-webview2"
 )
 
-const Version = "1.3.1"
+const Version = "1.3.2"
 
 // Puerto fijo: sirve también para detectar si la app ya está abierta.
 const puerto = "127.0.0.1:47831"
@@ -39,6 +39,7 @@ type App struct {
 	cfgPath   string
 	dataDir   string
 	entradas  string
+	subidas   chan struct{}
 	cola      *Cola
 	verMotor  string
 	verMotorU sync.Once
@@ -65,7 +66,7 @@ func main() {
 		return
 	}
 
-	app := &App{dataDir: dataDir, cfgPath: filepath.Join(dataDir, "config.json"), entradas: filepath.Join(dataDir, "entradas")}
+	app := &App{dataDir: dataDir, cfgPath: filepath.Join(dataDir, "config.json"), entradas: filepath.Join(dataDir, "entradas"), subidas: make(chan struct{}, 2)}
 	// Copias temporales de las imágenes en curso: lo que quedó de una sesión anterior sobra.
 	_ = os.RemoveAll(app.entradas)
 	_ = os.MkdirAll(app.entradas, 0o755)
@@ -78,7 +79,8 @@ func main() {
 	app.rutas(mux)
 
 	go func() {
-		if err := http.Serve(ln, mux); err != nil {
+		server := &http.Server{Handler: seguridadHTTP(mux), ReadHeaderTimeout: 5 * time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 1 << 20}
+		if err := server.Serve(ln); err != nil {
 			log.Println("servidor:", err)
 		}
 	}()
@@ -201,19 +203,31 @@ func leerJSON(r *http.Request, v any) error {
 	return nil
 }
 
-// Solo aceptamos peticiones de la propia interfaz (evita que otras webs usen la API).
+// Solo acepta la interfaz local y exige Origin exacto para las operaciones no seguras.
 func soloLocal(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if o := r.Header.Get("Origin"); o != "" && o != "http://"+puerto {
+		if r.Host != puerto {
 			fallar(w, http.StatusForbidden, msj("accesoDenegado"))
 			return
 		}
-		if r.Method == http.MethodPost && r.Header.Get("X-PNGWebp") != "1" {
+		origen := r.Header.Get("Origin")
+		seguro := r.Method == http.MethodGet || r.Method == http.MethodHead
+		if (!seguro && origen != "http://"+puerto) || (seguro && origen != "" && origen != "http://"+puerto) {
 			fallar(w, http.StatusForbidden, msj("accesoDenegado"))
 			return
 		}
 		h(w, r)
 	}
+}
+
+func seguridadHTTP(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Security-Policy", "default-src 'self'; script-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("Referrer-Policy", "no-referrer")
+		w.Header().Set("X-Frame-Options", "DENY")
+		h.ServeHTTP(w, r)
+	})
 }
 
 func (a *App) rutas(mux *http.ServeMux) {
@@ -231,6 +245,13 @@ func (a *App) rutas(mux *http.ServeMux) {
 	mux.HandleFunc("/api/agregar", soloLocal(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			fallar(w, http.StatusMethodNotAllowed, msj("peticionInvalida"))
+			return
+		}
+		select {
+		case a.subidas <- struct{}{}:
+			defer func() { <-a.subidas }()
+		default:
+			fallar(w, http.StatusTooManyRequests, msj("colaLlena"))
 			return
 		}
 		nombre := filepath.Base(strings.ReplaceAll(r.URL.Query().Get("nombre"), "\\", "/"))
@@ -263,7 +284,12 @@ func (a *App) rutas(mux *http.ServeMux) {
 			fallar(w, http.StatusRequestEntityTooLarge, msj("demasiadoGrande", "nombre", nombre))
 			return
 		}
-		id := a.cola.Agregar(nombre, formato, ruta, tamano, copiados+int64(n))
+		id, err := a.cola.Agregar(nombre, formato, ruta, tamano, copiados+int64(n))
+		if err != nil {
+			_ = os.Remove(ruta)
+			fallar(w, http.StatusTooManyRequests, msj("colaLlena"))
+			return
+		}
 		responder(w, map[string]int{"id": id})
 	}))
 

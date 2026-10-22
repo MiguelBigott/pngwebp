@@ -15,6 +15,18 @@ import (
 	xdraw "golang.org/x/image/draw"
 )
 
+const (
+	maxPixelesImagen int64 = 40_000_000
+	maxLadoImagen          = 50_000
+)
+
+func validarDimensiones(ancho, alto int) error {
+	if ancho <= 0 || alto <= 0 || ancho > maxLadoImagen || alto > maxLadoImagen || int64(ancho) > maxPixelesImagen/int64(alto) {
+		return msj("dimensionesExcesivas")
+	}
+	return nil
+}
+
 // Tamano es una salida posible: 0×0 conserva el tamaño original.
 type Tamano struct {
 	Ancho, Alto int
@@ -122,7 +134,10 @@ func medidas(ruta string, orientacion int) (int, int, error) {
 		return 0, 0, msj("noLeerImagen")
 	}
 	if orientacion >= 5 {
-		return cfg.Height, cfg.Width, nil
+		cfg.Width, cfg.Height = cfg.Height, cfg.Width
+	}
+	if err := validarDimensiones(cfg.Width, cfg.Height); err != nil {
+		return 0, 0, err
 	}
 	return cfg.Width, cfg.Height, nil
 }

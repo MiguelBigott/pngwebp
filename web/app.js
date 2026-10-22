@@ -3,7 +3,7 @@
 const $ = (s) => document.querySelector(s);
 
 async function api(ruta, datos) {
-  const opciones = { headers: { "X-PNGWebp": "1" } };
+  const opciones = { headers: {  } };
   if (datos !== undefined) {
     opciones.method = "POST";
     opciones.headers["Content-Type"] = "application/json";
@@ -53,7 +53,7 @@ function subir(archivos) {
     for (const f of imagenes) {
       try {
         const r = await fetch(`/api/agregar?nombre=${encodeURIComponent(f.name)}&tamano=${encodeURIComponent(tamano)}`,
-          { method: "POST", headers: { "X-PNGWebp": "1" }, body: f });
+          { method: "POST", headers: {  }, body: f });
         if (!r.ok) throw new Error(tm((await r.json().catch(() => ({}))).error) || f.name);
         bien++;
         refrescar();

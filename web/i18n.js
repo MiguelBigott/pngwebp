@@ -40,7 +40,7 @@ const TEXTOS = {
     "motorNoConvirtio": "El motor WebP no pudo convertir esta imagen.", "noLeerImagen": "No se pudo leer la imagen.",
     "imagenDanada": "No se pudo leer la imagen: el archivo parece dañado o incompleto.",
     "noPngJpg": "{nombre} no es un PNG ni un JPG.", "noRecibir": "No se pudo recibir la imagen.",
-    "demasiadoGrande": "{nombre} es demasiado grande (máximo 300 MB).", "tamanoDesconocido": "Tamaño desconocido.",
+    "demasiadoGrande": "{nombre} es demasiado grande (máximo 300 MB).", "dimensionesExcesivas": "La imagen supera el límite de 40 megapíxeles.", "colaLlena": "La cola alcanzó su límite. Limpia elementos terminados e inténtalo de nuevo.", "tamanoDesconocido": "Tamaño desconocido.",
     "peticionInvalida": "Petición inválida.", "accesoDenegado": "Acceso denegado.", "errorDetalle": "Error: {detalle}",
   },
 
@@ -75,7 +75,7 @@ const TEXTOS = {
     "motorNoConvirtio": "The WebP engine couldn't convert this image.", "noLeerImagen": "Couldn't read the image.",
     "imagenDanada": "Couldn't read the image: the file looks damaged or incomplete.",
     "noPngJpg": "{nombre} isn't a PNG or a JPG.", "noRecibir": "Couldn't receive the image.",
-    "demasiadoGrande": "{nombre} is too large (300 MB max).", "tamanoDesconocido": "Unknown size.",
+    "demasiadoGrande": "{nombre} is too large (300 MB max).", "dimensionesExcesivas": "Image exceeds the 40 megapixel limit.", "colaLlena": "The queue is full. Clear completed items and try again.", "tamanoDesconocido": "Unknown size.",
     "peticionInvalida": "Invalid request.", "accesoDenegado": "Access denied.", "errorDetalle": "Error: {detalle}",
   },
 
@@ -110,7 +110,7 @@ const TEXTOS = {
     "motorNoConvirtio": "Le moteur WebP n'a pas pu convertir cette image.", "noLeerImagen": "Impossible de lire l'image.",
     "imagenDanada": "Impossible de lire l'image : le fichier semble endommagé ou incomplet.",
     "noPngJpg": "{nombre} n'est ni un PNG ni un JPG.", "noRecibir": "Impossible de recevoir l'image.",
-    "demasiadoGrande": "{nombre} est trop volumineux (300 Mo maximum).", "tamanoDesconocido": "Taille inconnue.",
+    "demasiadoGrande": "{nombre} est trop volumineux (300 Mo maximum).", "dimensionesExcesivas": "La limite de 40 mégapixels est dépassée pour cette image.", "colaLlena": "La file est pleine. Supprimez les éléments terminés et réessayez.", "tamanoDesconocido": "Taille inconnue.",
     "peticionInvalida": "Requête invalide.", "accesoDenegado": "Accès refusé.", "errorDetalle": "Erreur : {detalle}",
   },
 
@@ -145,7 +145,7 @@ const TEXTOS = {
     "motorNoConvirtio": "Die WebP-Engine konnte dieses Bild nicht umwandeln.", "noLeerImagen": "Das Bild konnte nicht gelesen werden.",
     "imagenDanada": "Das Bild konnte nicht gelesen werden: Die Datei scheint beschädigt oder unvollständig zu sein.",
     "noPngJpg": "{nombre} ist weder PNG noch JPG.", "noRecibir": "Das Bild konnte nicht empfangen werden.",
-    "demasiadoGrande": "{nombre} ist zu groß (maximal 300 MB).", "tamanoDesconocido": "Unbekannte Größe.",
+    "demasiadoGrande": "{nombre} ist zu groß (maximal 300 MB).", "dimensionesExcesivas": "Das Bild überschreitet die Grenze von 40 Megapixeln.", "colaLlena": "Die Warteschlange ist voll. Entferne fertige Einträge und versuche es erneut.", "tamanoDesconocido": "Unbekannte Größe.",
     "peticionInvalida": "Ungültige Anfrage.", "accesoDenegado": "Zugriff verweigert.", "errorDetalle": "Fehler: {detalle}",
   },
 
@@ -180,7 +180,7 @@ const TEXTOS = {
     "motorNoConvirtio": "Движку WebP не удалось преобразовать это изображение.", "noLeerImagen": "Не удалось прочитать изображение.",
     "imagenDanada": "Не удалось прочитать изображение: файл, похоже, повреждён или неполон.",
     "noPngJpg": "{nombre} не является PNG или JPG.", "noRecibir": "Не удалось получить изображение.",
-    "demasiadoGrande": "{nombre} слишком большой (максимум 300 МБ).", "tamanoDesconocido": "Неизвестный размер.",
+    "demasiadoGrande": "{nombre} слишком большой (максимум 300 МБ).", "dimensionesExcesivas": "Изображение превышает ограничение в 40 мегапикселей.", "colaLlena": "Очередь заполнена. Удалите завершённые элементы и попробуйте снова.", "tamanoDesconocido": "Неизвестный размер.",
     "peticionInvalida": "Неверный запрос.", "accesoDenegado": "Доступ запрещён.", "errorDetalle": "Ошибка: {detalle}",
   },
 
@@ -215,7 +215,7 @@ const TEXTOS = {
     "motorNoConvirtio": "O motor WebP não conseguiu converter esta imagem.", "noLeerImagen": "Não foi possível ler a imagem.",
     "imagenDanada": "Não foi possível ler a imagem: o arquivo parece danificado ou incompleto.",
     "noPngJpg": "{nombre} não é PNG nem JPG.", "noRecibir": "Não foi possível receber a imagem.",
-    "demasiadoGrande": "{nombre} é grande demais (máximo de 300 MB).", "tamanoDesconocido": "Tamanho desconhecido.",
+    "demasiadoGrande": "{nombre} é grande demais (máximo de 300 MB).", "dimensionesExcesivas": "A imagem excede o limite de 40 megapixels.", "colaLlena": "A fila está cheia. Limpe os itens concluídos e tente novamente.", "tamanoDesconocido": "Tamanho desconhecido.",
     "peticionInvalida": "Solicitação inválida.", "accesoDenegado": "Acesso negado.", "errorDetalle": "Erro: {detalle}",
   },
 
@@ -250,7 +250,7 @@ const TEXTOS = {
     "motorNoConvirtio": "WebP 引擎无法转换这张图片。", "noLeerImagen": "无法读取图片。",
     "imagenDanada": "无法读取图片：文件似乎已损坏或不完整。",
     "noPngJpg": "{nombre} 不是 PNG 或 JPG。", "noRecibir": "无法接收图片。",
-    "demasiadoGrande": "{nombre} 太大（最大 300 MB）。", "tamanoDesconocido": "未知尺寸。",
+    "demasiadoGrande": "{nombre} 太大（最大 300 MB）。", "dimensionesExcesivas": "图像超过了 4000 万像素限制。", "colaLlena": "队列已满。请清除已完成项目后重试。", "tamanoDesconocido": "未知尺寸。",
     "peticionInvalida": "请求无效。", "accesoDenegado": "拒绝访问。", "errorDetalle": "错误：{detalle}",
   },
 
@@ -285,7 +285,7 @@ const TEXTOS = {
     "motorNoConvirtio": "WebP エンジンでこの画像を変換できませんでした。", "noLeerImagen": "画像を読み込めませんでした。",
     "imagenDanada": "画像を読み込めませんでした。ファイルが壊れているか不完全なようです。",
     "noPngJpg": "{nombre} は PNG でも JPG でもありません。", "noRecibir": "画像を受け取れませんでした。",
-    "demasiadoGrande": "{nombre} は大きすぎます（最大 300 MB）。", "tamanoDesconocido": "不明なサイズです。",
+    "demasiadoGrande": "{nombre} は大きすぎます（最大 300 MB）。", "dimensionesExcesivas": "画像が 4000 万画素の上限を超えています。", "colaLlena": "キューがいっぱいです。完了した項目を消去して、もう一度お試しください。", "tamanoDesconocido": "不明なサイズです。",
     "peticionInvalida": "無効なリクエストです。", "accesoDenegado": "アクセスが拒否されました。", "errorDetalle": "エラー: {detalle}",
   },
 };
